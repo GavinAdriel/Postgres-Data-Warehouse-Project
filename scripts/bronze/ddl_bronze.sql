@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS bronze.crm_cust_info (
     cst_lastname TEXT,
     cst_marital_status TEXT,
     cst_gndr TEXT,
-    cst_create_date DATE
+    cst_create_date DATE,
 );
 
 -- 2. CRM Product Info
@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS bronze.crm_prd_info (
     prd_cost INTEGER,
     prd_line TEXT,
     prd_start_dt TIMESTAMP,
-    prd_end_dt TIMESTAMP
+    prd_end_dt TIMESTAMP,
 );
 
 -- 3. CRM Sales Details
@@ -45,29 +45,29 @@ CREATE TABLE IF NOT EXISTS bronze.crm_sales_details (
     sls_due_dt INTEGER,
     sls_sales INTEGER,
     sls_quantity INTEGER,
-    sls_price INTEGER
+    sls_price INTEGER,
 );
 
 -- 4. ERP Customer AZ12
 DROP TABLE IF EXISTS bronze.erp_cust_az12;
 CREATE TABLE IF NOT EXISTS bronze.erp_cust_az12 (
-    CID TEXT,
-    BDATE DATE,
-    GEN TEXT
+    cid TEXT,
+    bdate DATE,
+    gen TEXT,
 );
 
 -- 5. ERP Location A101
 DROP TABLE IF EXISTS bronze.erp_loc_a101;
 CREATE TABLE IF NOT EXISTS bronze.erp_loc_a101 (
-    CID TEXT,
-    CNTRY TEXT
+    cid TEXT,
+    cntry TEXT,
 );
 
 -- 6. ERP PX Category G1V2
 DROP TABLE IF EXISTS bronze.erp_px_cat_g1v2;
 CREATE TABLE IF NOT EXISTS bronze.erp_px_cat_g1v2 (
-    ID TEXT,
-    CAT TEXT,
-    SUBCAT TEXT,
-    MAINTENANCE TEXT
+    id TEXT,
+    cat TEXT,
+    subcat TEXT,
+    maintenance TEXT,
 );
