@@ -13,21 +13,30 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
 EOSQL
 echo "[SUCCESS] Schemas created: $BRONZE_SCHEMA, $SILVER_SCHEMA, $GOLD_SCHEMA"
 
-# --- 3️⃣ Load SQL files automatically ---
-SQL_DIR="/docker-entrypoint-initdb.d/sql"
-if [ -d "$SQL_DIR" ]; then
-  echo "[INFO] Found SQL directory at $SQL_DIR"
-  for sql_file in "$SQL_DIR"/*.sql; do
-    if [ -f "$sql_file" ]; then
-      echo "[RUNNING] Executing $sql_file ..."
-      psql -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -d "$POSTGRES_DB" -f "$sql_file"
-      echo "[SUCCESS] Executed: $sql_file"
-    else
-      echo "[INFO] No .sql files found in $SQL_DIR"
-    fi
-  done
-else
-  echo "[WARN] SQL directory not found at $SQL_DIR"
-fi
+# --- 3️⃣ Load SQL files---
+echo "[INFO] Executing SQL files in explicit order..."
+
+echo "[INFO] Creating Bronze table..."
+psql -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -d "$POSTGRES_DB" -f /docker-entrypoint-initdb.d/scripts/bronze/ddl_bronze.sql
+echo "[INFO] Creating Bronze load procedure..."
+psql -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -d "$POSTGRES_DB" -f /docker-entrypoint-initdb.d/scripts/bronze/load_bronze.sql
+echo "[INFO] Running Bronze load procedure..."
+psql -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "CALL bronze.load_bronze();"
+
+echo "[INFO] Creating Silver table..."
+psql -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -d "$POSTGRES_DB" -f /docker-entrypoint-initdb.d/scripts/silver/ddl_silver.sql
+echo "[INFO] Creating Silver load procedure..."
+psql -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -d "$POSTGRES_DB" -f /docker-entrypoint-initdb.d/scripts/silver/load_silver.sql
+echo "[INFO] Running Silver load procedure..."
+psql -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "CALL silver.load_silver();"
+
+echo "[INFO] Creating Gold view procedure..."
+psql -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -d "$POSTGRES_DB" -f /docker-entrypoint-initdb.d/scripts/gold/view_gold.sql
+echo "[INFO] Running Gold view procedure..."
+psql -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "CALL gold.view_gold();"
+
+echo "[SUCCESS] All SQL executed in manual order."
 
 echo "[INIT COMPLETE] Data Warehouse setup is ready."
+
+

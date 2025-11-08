@@ -18,7 +18,7 @@ services:
       - ./:/sql-data-warehouse-project/
       # init scripts and schema setup
       - ./scripts/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
-      - ./scripts/bronze:/docker-entrypoint-initdb.d/sql/
+      - ./scripts:/docker-entrypoint-initdb.d/scripts/
 
   pgadmin:
     image: dpage/pgadmin4
