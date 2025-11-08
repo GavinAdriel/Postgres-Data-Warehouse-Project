@@ -24,6 +24,13 @@ This project involves:
 
 ## 🚀 Project Set Up
 
+**Copy the environment in you project directory**
+
+```
+cp example.env .env
+```
+---
+
 **Build the docker container for postgres and pgadmin**
 
 ```
